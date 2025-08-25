@@ -1,5 +1,7 @@
 import { Link } from "react-router";
 import type { Post } from "./PostList"
+import { FaHeart } from "react-icons/fa";
+import { IoChatbubbleSharp } from "react-icons/io5";
 
 interface Props {
     post: Post;
@@ -32,6 +34,10 @@ const PostItem = ({ post }: Props) => {
                         {/* Image */}
                         <div className="mt-2 flex-1">
                             <img src={post.image_url} alt={post.title} className="w-full rounded-[20px] object-cover max-h-[150px] mx-auto" />
+                        </div>
+                        <div className="flex items-center justify-around">
+                            <span className="cursor-pointer h-10 w-[50px] px-1 flex items-center justify-center font-extrabold rounded-lg"><FaHeart className="text-red-500" /> <span className="ml-2">{post.like_count ?? 0}</span></span>
+                            <span className="cursor-pointer h-10 w-[50px] px-1 flex items-center justify-center font-extrabold rounded-lg"><IoChatbubbleSharp className="text-blue-500" /><span className="ml-2">{post.comment_count ?? 0}</span></span>
                         </div>
                     </div>
                 </Link>
