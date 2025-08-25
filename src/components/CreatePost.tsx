@@ -1,11 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState, type ChangeEvent } from "react"
 import supabase from "../supabase-client";
+import { useAuth } from "../context/AuthContext";
 
 
 interface PostInput {
     title: string;
     content: string;
+    avatar_url: string | null;
 }
 
 const createPost = async (post: PostInput, imageFile: File) => {
@@ -26,6 +28,9 @@ const CreatePost = () => {
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+    const { user } = useAuth();
+
     const { mutate, isPending, isError } = useMutation({
         mutationFn: (data: { post: PostInput; imageFile: File }) => {
             return createPost(data.post, data.imageFile);
@@ -35,7 +40,7 @@ const CreatePost = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedFile) return;
-        mutate({ post: { title, content }, imageFile: selectedFile });
+        mutate({ post: { title, content, avatar_url: user?.user_metadata.avatar_url || null, }, imageFile: selectedFile });
     }
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +74,7 @@ const CreatePost = () => {
                     />
                 </div>
                 <button
-                    className={`bg-purple-500 text-white px-4 py-2 rounded ${isPending ? 'opacity-50 cursor-not-allowed': 'cursor-pointer'}`}
+                    className={`bg-purple-500 text-white px-4 py-2 rounded ${isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     type="submit"
                     disabled={isPending}
                 >
