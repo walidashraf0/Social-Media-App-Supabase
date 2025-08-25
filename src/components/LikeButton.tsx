@@ -35,8 +35,6 @@ const vote = async (voteValue: number, postId: number, userId: string) => {
 const getVotes = async (postId: number): Promise<Vote[]> => {
     const { data, error } = await supabase.from("votes").select().eq("post_id", postId);
     if (error) throw new Error(error.message);
-
-
     return data as Vote[];
 }
 
