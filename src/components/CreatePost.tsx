@@ -1,13 +1,15 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState, type ChangeEvent } from "react"
 import supabase from "../supabase-client";
 import { useAuth } from "../context/AuthContext";
+import { getCommunities, type Community } from "./CommunityList";
 
 
 interface PostInput {
     title: string;
     content: string;
     avatar_url: string | null;
+    community_id: number | null;
 }
 
 const createPost = async (post: PostInput, imageFile: File) => {
@@ -27,9 +29,14 @@ const createPost = async (post: PostInput, imageFile: File) => {
 const CreatePost = () => {
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
+    const [communityId, setCommunityId] = useState<number | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const { user } = useAuth();
+    const { data: communities } = useQuery<Community[], Error>({
+        queryKey: ["communities"],
+        queryFn: getCommunities,
+    });
 
     const { mutate, isPending, isError } = useMutation({
         mutationFn: (data: { post: PostInput; imageFile: File }) => {
@@ -40,13 +47,18 @@ const CreatePost = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedFile) return;
-        mutate({ post: { title, content, avatar_url: user?.user_metadata.avatar_url || null, }, imageFile: selectedFile });
+        mutate({ post: { title, content, avatar_url: user?.user_metadata.avatar_url || null, community_id: communityId }, imageFile: selectedFile });
     }
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setSelectedFile(e.target.files[0])
         }
+    }
+
+    const handleCommunityChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setCommunityId(value ? Number(value) : null);
     }
 
 
@@ -61,6 +73,17 @@ const CreatePost = () => {
                     <label htmlFor="content" className="block mb-2 font-medium">Content</label>
                     <textarea className="w-full border border-white/10 bg-transparent p-2 rounded" value={content} rows={5} name="content" id="content" required onChange={(e) => setContent(e.target.value)} />
                 </div>
+
+                <div>
+                    <label htmlFor="community">Select Community</label>
+                    <select name="community" id="community" onChange={handleCommunityChange}>
+                        <option value={""}>-- Choose Community -- </option>
+                        {communities?.map((community, key) => (
+                            <option key={key} value={community.id}>{community.name}</option>
+                        ))}
+                    </select>
+                </div>
+
                 <div>
                     <label htmlFor="image" className="block mb-2 font-medium">Upload Image</label>
                     <input
