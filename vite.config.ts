@@ -7,4 +7,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: process.env.VITEBASE_PATH || "/Social-Media-App-Supabase",
+  build: {
+    outDir: 'dist'
+  }
 })
