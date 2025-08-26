@@ -7,9 +7,7 @@ import CreateCommunityPage from "./pages/CreateCommunityPage"
 import CommunitiesPage from "./pages/CommunitiesPage"
 import CommunityPage from "./pages/CommunityPage"
 
-
 function App() {
-
   return (
     <div className="min-h-screen bg-black text-gray-100 transition-opacity duration-700 pt-20">
       <Navbar />
