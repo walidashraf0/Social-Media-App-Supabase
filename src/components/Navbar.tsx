@@ -10,8 +10,6 @@ const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const { signInWithGithub, signInWithGoogle, signOut, user } = useAuth();
 
-    console.log(user);
-
     const displayName = user?.user_metadata.full_name || user?.email;
 
     return (
