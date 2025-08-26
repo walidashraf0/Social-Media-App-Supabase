@@ -1,15 +1,18 @@
 import { useState } from "react"
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaGithub } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { Link } from "react-router"
 import { useAuth } from "../context/AuthContext";
+import { FcGoogle } from "react-icons/fc";
 
 const Navbar = () => {
 
     const [menuOpen, setMenuOpen] = useState(false);
-    const { signInWithGithub, signOut, user } = useAuth();
+    const { signInWithGithub, signInWithGoogle, signOut, user } = useAuth();
 
-    const displayName = user?.user_metadata.user_name || user?.email;
+    console.log(user);
+
+    const displayName = user?.user_metadata.full_name || user?.email;
 
     return (
         <nav className="fixed top-0 w-full z-40 bg-[rgba(10,10,10,0.8)] backdrop-blur-lg border-b border-white/10 shadow-lg">
@@ -37,7 +40,22 @@ const Navbar = () => {
                                 <button className="bg-red-500 px-3 py-1 rounded cursor-pointer" onClick={signOut}>Sign Out</button>
                             </div>
                         ) : (
-                            <button onClick={signInWithGithub} className="cursor-pointer bg-blue-500 px-3 py-1 rounded">Sign in With Github</button>
+                            <>
+                                <div className="flex items-center gap-4">
+                                    <button onClick={signInWithGithub} className="cursor-pointer bg-[#1E2939] px-3 py-1 rounded">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-white">Sign in With Github</span>
+                                            <FaGithub />
+                                        </div>
+                                    </button>
+                                    <button onClick={signInWithGoogle} className="cursor-pointer bg-white px-3 py-1 rounded">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-black">Sign in With Google</span>
+                                            <FcGoogle />
+                                        </div>
+                                    </button>
+                                </div>
+                            </>
                         )}
                     </div>
 
