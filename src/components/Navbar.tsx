@@ -58,19 +58,33 @@ const Navbar = () => {
                     </div>
 
                     {/* Mobile Menu Button */}
-                    <div className="md:hidden">
-                        <button className="text-gray-300 focus:outline-none" onClick={() => setMenuOpen(prev => !prev)}>{menuOpen ? <IoClose /> : <FaBars />
+                    <div className="md:hidden absolute z-10 top-5 right-1">
+                        <button className="text-gray-300 focus:outline-none cursor-pointer" onClick={() => setMenuOpen(prev => !prev)}>{menuOpen ? <IoClose size={25} /> : <FaBars />
                         }</button>
                     </div>
 
                     {/* Mobile Menu */}
                     {menuOpen && (
-                        <div className="md:hidden bg-[rgba(10,10,10,0.9)]">
+                        <div className="md:hidden absolute top-4 right-1 p-4 bg-[rgba(10,10,10,0.9)]">
                             <div className="px-2 pt-2 pb-3 space-y-1">
                                 <Link className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" to={"/"}>Home</Link>
                                 <Link className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" to={"/create"}>Create Post</Link>
                                 <Link className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" to={"/communities"}>Communities</Link>
                                 <Link className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" to={"/community/create"}>Create Community</Link>
+                                <div className="flex flex-col items-center gap-4">
+                                    <button onClick={signInWithGithub} className="cursor-pointer bg-[#1E2939] px-3 py-1 rounded">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-white">Sign in With Github</span>
+                                            <FaGithub />
+                                        </div>
+                                    </button>
+                                    <button onClick={signInWithGoogle} className="cursor-pointer bg-white px-3 py-1 rounded">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-black">Sign in With Google</span>
+                                            <FcGoogle />
+                                        </div>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}
