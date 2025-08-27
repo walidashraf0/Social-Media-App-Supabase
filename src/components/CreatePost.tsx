@@ -1,9 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState, type ChangeEvent } from "react"
+import { useState, useRef, type ChangeEvent } from "react"
 import supabase from "../supabase-client";
 import { useAuth } from "../context/AuthContext";
 import { getCommunities, type Community } from "./CommunityList";
 import { MdOutlineCloudUpload } from "react-icons/md";
+import { useNavigate } from "react-router";
 
 
 interface PostInput {
@@ -32,6 +33,9 @@ const CreatePost = () => {
     const [content, setContent] = useState<string>('');
     const [communityId, setCommunityId] = useState<number | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const navigate = useNavigate();
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const { user } = useAuth();
     const { data: communities } = useQuery<Community[], Error>({
@@ -49,11 +53,24 @@ const CreatePost = () => {
         e.preventDefault();
         if (!selectedFile) return;
         mutate({ post: { title, content, avatar_url: user?.user_metadata.avatar_url || null, community_id: communityId }, imageFile: selectedFile });
+        setTitle("");
+        setContent("");
+        setSelectedFile(null);
+        setImagePreview(null);
+        navigate("/");
     }
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setSelectedFile(e.target.files[0])
+            const file = e.target.files[0];
+            setSelectedFile(file);
+
+            // Generate preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
         }
     }
 
@@ -62,6 +79,13 @@ const CreatePost = () => {
         setCommunityId(value ? Number(value) : null);
     }
 
+    const handleRemoveImage = () => {
+        setSelectedFile(null);
+        setImagePreview(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    }
 
     return (
         <>
@@ -103,15 +127,15 @@ const CreatePost = () => {
                     </div>
                 </div>
 
-                <div>
+                <div className="flex items-center gap-8 flex-wrap">
                     <div
                         className="h-[200px] w-[300px] my-8 flex flex-col gap-5 cursor-pointer items-center justify-center border-2 border-dashed border-[#E8E8E8] bg-[#212121] p-6 rounded-xl shadow-[0px_48px_35px_-48px_#E8E8E8] transition hover:border-purple-400 hover:bg-[#292929]"
-                        onClick={() => document.getElementById('image-upload-input')?.click()}
+                        onClick={() => fileInputRef.current?.click()}
                         tabIndex={0}
                         role="button"
                         onKeyPress={e => {
                             if (e.key === 'Enter' || e.key === ' ') {
-                                document.getElementById('image-upload-input')?.click();
+                                fileInputRef.current?.click();
                             }
                         }}
                     >
@@ -130,8 +154,26 @@ const CreatePost = () => {
                             onChange={handleFileChange}
                             style={{ display: 'none' }}
                             tabIndex={-1}
+                            ref={fileInputRef}
                         />
                     </div>
+                    {imagePreview && (
+                        <div className="flex flex-col items-center mt-4">
+                            <img
+                                src={imagePreview}
+                                alt="Preview"
+                                className="max-h-48 max-w-xs rounded-lg border border-white/10 object-contain"
+                                style={{ background: "#18181b" }}
+                            />
+                            <button
+                                type="button"
+                                className="mt-2 text-sm text-red-400 hover:underline cursor-pointer"
+                                onClick={handleRemoveImage}
+                            >
+                                Remove Image
+                            </button>
+                        </div>
+                    )}
                 </div>
                 <button
                     className={`bg-purple-500 text-white px-4 py-2 rounded ${isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}

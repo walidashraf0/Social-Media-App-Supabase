@@ -71,20 +71,32 @@ const Navbar = () => {
                                 <Link className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" to={"/create"}>Create Post</Link>
                                 <Link className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" to={"/communities"}>Communities</Link>
                                 <Link className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" to={"/community/create"}>Create Community</Link>
-                                <div className="flex flex-col items-center gap-4">
-                                    <button onClick={signInWithGithub} className="cursor-pointer bg-[#1E2939] px-3 py-1 rounded">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-white">Sign in With Github</span>
-                                            <FaGithub />
+                                {user ? (
+                                    <div className="flex items-center space-x-4">
+                                        {user.user_metadata.avatar_url && (
+                                            <img src={user.user_metadata.avatar_url} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
+                                        )}
+                                        <span className="text-gray-300">{displayName}</span>
+                                        <button className="bg-red-500 px-3 py-1 rounded cursor-pointer" onClick={signOut}>Sign Out</button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="flex flex-col items-center gap-4">
+                                            <button onClick={signInWithGithub} className="cursor-pointer bg-[#1E2939] px-3 py-1 rounded">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-white">Sign in With Github</span>
+                                                    <FaGithub />
+                                                </div>
+                                            </button>
+                                            <button onClick={signInWithGoogle} className="cursor-pointer bg-white px-3 py-1 rounded">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-black">Sign in With Google</span>
+                                                    <FcGoogle />
+                                                </div>
+                                            </button>
                                         </div>
-                                    </button>
-                                    <button onClick={signInWithGoogle} className="cursor-pointer bg-white px-3 py-1 rounded">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-black">Sign in With Google</span>
-                                            <FcGoogle />
-                                        </div>
-                                    </button>
-                                </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     )}
