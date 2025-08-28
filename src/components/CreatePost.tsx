@@ -46,6 +46,9 @@ const CreatePost = () => {
     const { mutate, isPending, isError } = useMutation({
         mutationFn: (data: { post: PostInput; imageFile: File }) => {
             return createPost(data.post, data.imageFile);
+        },
+        onSuccess: () => {
+            navigate("/")
         }
     })
 
@@ -53,12 +56,9 @@ const CreatePost = () => {
         e.preventDefault();
         if (!selectedFile) return;
         mutate({ post: { title, content, avatar_url: user?.user_metadata.avatar_url || null, community_id: communityId }, imageFile: selectedFile });
-        setTitle("");
-        setContent("");
-        setSelectedFile(null);
-        setImagePreview(null);
-        navigate("/");
     }
+
+    // console.log(title, content, selectedFile, communityId)
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
