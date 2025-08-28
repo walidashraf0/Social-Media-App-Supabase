@@ -48,7 +48,11 @@ const CreatePost = () => {
             return createPost(data.post, data.imageFile);
         },
         onSuccess: () => {
-            navigate("/")
+            setTitle("");
+            setContent("");
+            setSelectedFile(null);
+            setImagePreview(null);    
+            navigate("/");
         }
     })
 
